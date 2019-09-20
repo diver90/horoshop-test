@@ -45,23 +45,29 @@ class ProductAggregator
         foreach ($products as $num => $product) {
             $items[$num]['id'] = $product['id'];
             $items[$num]['title'] = $product['title'];
-            $items[$num]['category'] = $this->findInArray($product['category']);
-            $items[$num]['price'] = $this->countPrice();
+            $items[$num]['category'] = array_search($product['category'], $this->data['category'], true);
+            $discountCategory = array_search($product['category'], $this->data['discounts'], true);
+            $discountProduct = array_search($product['id'], $this->data['discounts'], true);
+            $discount = $this->chooseDiscount($product['amount'], $discountCategory,$discountProduct);
+            $items[$num]['price'] = $this->countPrice($product);
         }
 
     }
 
-    private function findInArray($needle)
-    {
-        return array_search($needle, $this->data['category'], true);
-    }
-
-    private function countPrice()
+    /**
+     * @param array $product
+     */
+    private function countPrice($product)
     {
 
     }
 
-    private function chooseDiscount()
+    /**
+     * @param float $amount
+     * @param array $discountCategory
+     * @param array $discountProduct
+     */
+    private function chooseDiscount($amount, $discountCategory, $discountProduct)
     {
 
     }
