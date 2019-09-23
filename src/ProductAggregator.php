@@ -48,10 +48,35 @@ class ProductAggregator
             $items[$num]['category'] = array_search($product['category'], $this->data['category'], true);
             $discountCategory = array_search($product['category'], $this->data['discounts'], true);
             $discountProduct = array_search($product['id'], $this->data['discounts'], true);
-            $discount = $this->chooseDiscount($product['amount'], $discountCategory,$discountProduct);
+            $discount = $this->chooseDiscount($product['amount'], $discountCategory, $discountProduct);
             $items[$num]['price'] = $this->countPrice($product);
         }
 
+    }
+
+    /**
+     * @param float $amount
+     * @param array $discountCategory
+     * @param array $discountProduct
+     * @return float $discount
+     */
+    private function chooseDiscount($amount, $discountCategory, $discountProduct)
+    {
+        $amountDiscount = function ($discount, $amount) {
+            if ($discount['type'] == 'percent') {
+                return $amount * $discount['value'] / 100;
+            } else {
+                return $discount['value'];
+            }
+        };
+
+        $amountCategory = $amountDiscount($discountCategory, $amount);
+
+        $amountProduct = $amountDiscount($discountProduct, $amount);
+
+        $amountCategory > $amountProduct ? $discount = $amountCategory : $discount = $amountProduct;
+
+        return $discount;
     }
 
     /**
@@ -62,14 +87,5 @@ class ProductAggregator
 
     }
 
-    /**
-     * @param float $amount
-     * @param array $discountCategory
-     * @param array $discountProduct
-     */
-    private function chooseDiscount($amount, $discountCategory, $discountProduct)
-    {
-
-    }
 
 }
